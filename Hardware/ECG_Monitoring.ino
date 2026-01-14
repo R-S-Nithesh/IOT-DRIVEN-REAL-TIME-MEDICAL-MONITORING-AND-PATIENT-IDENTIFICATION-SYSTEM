@@ -26,7 +26,7 @@ const char* SERVER_URL = "http://YOUR_PC_IP/MedicalAPI/api/save_sensor_data.php"
 #define PIN_DS18B20    4
 #define PIN_DHT        5
 #define PIN_MQ135     34
-#define PIN_BUZZER    23 // <- now IO23!
+#define PIN_BUZZER    23 
 
 // ------ OBJECTS ------
 MAX30105 particleSensor;
