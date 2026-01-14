@@ -1,0 +1,22 @@
+Internet of Things (IoT) has become a foundational enabler of intelligent, interconnected medical 
+infrastructures. By linking sensors, devices, and clinical information systems, IoT facilitates seamless 
+acquisition, transmission, and analysis of real-time physiological data. Despite these developments, 
+two persistent challenges continue to undermine patient safety and clinical efficiency: the lack of 
+continuous patient monitoring and the prevalence of patient misidentification. Conventional 
+monitoring approaches rely heavily on periodic manual checks, which fail to capture sudden 
+physiological fluctuations, while manual patient verification processes remain vulnerable to human 
+error. These limitations can lead to missed clinical cues, delayed interventions, and preventable 
+medical complications. 
+ 
+This project introduces an integrated solution using the IoT driven real-time medical monitoring and 
+patient identification system. This model combines continuous IoT-based sensing with secure digital 
+identification (RFID). The system utilizes a network of wearable and bedside medical sensors such 
+as heart rate monitoring, pulse rate, Oxygen saturation, etc., which continuously measures vital 
+parameters such as heart rate, body temperature, and blood oxygen saturation. The sensors will be 
+communicating wirelessly with a centralized monitoring platform, where data is processed, 
+visualized, and analyzed to support timely clinical decision-making. To ensure accuracy and prevent 
+data-mixing errors, each patient assigned a unique digital identifier implemented through RFID 
+wristbands or machine-readable QR codes allowing all incoming physiological data streams, which 
+automatically matches with the correct patient’s electronic health records. This system not only 
+strengthens patient identity management, but also enabling uninterrupted observation of critical 
+health indicators.
