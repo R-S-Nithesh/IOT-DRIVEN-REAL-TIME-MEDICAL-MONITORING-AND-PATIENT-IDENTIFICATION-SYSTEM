@@ -26,8 +26,8 @@ health indicators.
 # STEPS-TO-REPLICATE:
 
 1. Prerequisites
-*•	Hardware:
-  *•	ESP32 (ECG + vitals node)
+* •	Hardware:
+  * •	ESP32 (ECG + vitals node)
   •	ESP8266 D1 Mini (RFID node with RDM6300)
   •	AD8232, MAX30102, DS18B20, DHT11, MQ135, YL 44 buzzer, RDM6300 module
 •	Software:
