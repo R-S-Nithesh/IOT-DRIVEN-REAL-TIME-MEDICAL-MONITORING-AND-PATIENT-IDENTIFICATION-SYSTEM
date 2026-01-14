@@ -92,16 +92,3 @@ iv.	Wire RDM6300 to ESP8266:
   •	Scan a patient RFID card:
   •	The dashboard should switch to “Monitoring: [Patient Name]”.
   •	Watch live ECG and vitals; verify readings are stored under Manage Patients → History.
-
-
-
-
-
-
-
-
-
-
-
-9. 
-
