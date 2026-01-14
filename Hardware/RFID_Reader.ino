@@ -9,80 +9,180 @@
 #include <ESP8266HTTPClient.h>
 #include <SoftwareSerial.h>
 
-// === WIFI & API CONFIG ===
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-const String serverUrl = "http://192.168.1.100/MedicalAPI/api/get_patient_by_rfid.php"; // Update IP
+// ========== WiFi Configuration ==========
+const char* WIFI_SSID = "YOUR_WIFI";
+const char* WIFI_PASS = "YOUR_PASSWORD";
+const char* API_BASE = "http://YOUR_PC_IP/medical/api/get_patient_by_rfid.php?rfid="; //Change IP address to your mobile or other device IP
 
-// === RFID SETUP ===
-SoftwareSerial rfid(2, 14); // RX=D4(GPIO2), TX=D5(GPIO14)    //Sometimes Reverse the pins
-String rfidUID = "";
+// ========== Pin Definitions ==========
+#define PIN_RFID_RX   D7   // GPIO13 - RDM6300 TX → ESP8266 RX (MOVED FROM D8!)  //If not working Just Interchange the RX and TX pins.
+#define PIN_RFID_TX   D6   // GPIO12 - Not used
+#define PIN_LED       D5   // GPIO14 - Status LED
+
+// ========== RDM6300 UART (SoftwareSerial) ==========
+SoftwareSerial rfidSerial(PIN_RFID_RX, PIN_RFID_TX);
+
+// ========== State Variables ==========
+unsigned long lastScan = 0;
+const long SCAN_COOLDOWN = 3000;
+String lastUID = "";
 
 void setup() {
-  Serial.begin(9600);
-  rfid.begin(9600);
-  
-  // Connect WiFi
-  WiFi.begin(ssid, password);
+  Serial.begin(115200);
+  delay(200);
+  Serial.println("\n========================================");
+  Serial.println("  RFID Patient Scanner (RDM6300)");
+  Serial.println("========================================\n");
+
+  pinMode(PIN_LED, OUTPUT);
+  digitalWrite(PIN_LED, LOW);
+
+  rfidSerial.begin(9600);
+  Serial.println("✓ RDM6300 initialized (D7 RX @ 9600 baud)");
+  Serial.println("  Format: EM-4100 125 kHz");
+
+  // LED startup (3 blinks)
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(PIN_LED, HIGH); delay(100);
+    digitalWrite(PIN_LED, LOW); delay(100);
+  }
+
+  // WiFi
   Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  
+  int timeout = 0;
+  while (WiFi.status() != WL_CONNECTED && timeout < 30) {
     delay(500);
     Serial.print(".");
+    digitalWrite(PIN_LED, !digitalRead(PIN_LED));
+    timeout++;
   }
-  Serial.println("\nWiFi connected! IP: " + WiFi.localIP().toString());
-  
-  Serial.println("RFID Reader Ready - Scan patient card...");
+  Serial.println();
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("✓ WiFi connected: " + WiFi.localIP().toString());
+    digitalWrite(PIN_LED, HIGH); delay(500); digitalWrite(PIN_LED, LOW);
+  } else {
+    Serial.println("✗ WiFi connection failed!");
+    for (int i = 0; i < 10; i++) {
+      digitalWrite(PIN_LED, !digitalRead(PIN_LED));
+      delay(100);
+    }
+  }
+
+  Serial.println("\n========================================");
+  Serial.println("  Ready! Waiting for RFID cards...");
+  Serial.println("========================================\n");
 }
 
 void loop() {
-  // Read RFID
-  if (rfid.available()) {
-    rfidUID = "";
-    while (rfid.available()) {
-      char c = rfid.read();
-      if (c != '\n' && c != '\r') {
-        rfidUID += c;
+  if (rfidSerial.available()) {
+    byte startByte = rfidSerial.read();
+
+    if (startByte == 0x02) {
+      String uid = "";
+      
+      for (int i = 0; i < 10; i++) {
+        unsigned long waitStart = millis();
+        while (!rfidSerial.available()) {
+          if (millis() - waitStart > 100) {
+            Serial.println("❌ RFID read timeout");
+            return;
+          }
+          delay(1);
+        }
+        char c = rfidSerial.read();
+        uid += c;
       }
-    }
-    
-    // Remove null terminator
-    if (rfidUID.length() > 0) {
-      rfidUID.trim();
-      Serial.println("RFID UID detected: " + rfidUID);
+
+      // Read checksum
+      for (int i = 0; i < 2; i++) {
+        while (!rfidSerial.available()) delay(1);
+        rfidSerial.read();
+      }
+
+      // Flush remaining
+      while (rfidSerial.available()) rfidSerial.read();
+
+      uid.toUpperCase();
+
+      if (uid == lastUID && (millis() - lastScan < SCAN_COOLDOWN)) {
+        Serial.println("   (duplicate, ignored)");
+        return;
+      }
+
+      lastUID = uid;
+      lastScan = millis();
+
+      digitalWrite(PIN_LED, HIGH);
       
-      // Send to server
-      activatePatientSession(rfidUID);
+      Serial.println("\n📱 RFID Card Detected!");
+      Serial.println("   UID: " + uid);
       
-      delay(2000); // Prevent multiple scans
+      scanPatient(uid);
+      
+      delay(300);
+      digitalWrite(PIN_LED, LOW);
+      delay(200);
+      digitalWrite(PIN_LED, HIGH);
+      delay(200);
+      digitalWrite(PIN_LED, LOW);
     }
   }
-  
-  delay(100);
 }
 
-void activatePatientSession(String uid) {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    String url = serverUrl + "?rfid=" + uid;
-    http.begin(url);
+void scanPatient(String uid) {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("❌ WiFi disconnected");
+    blinkError();
+    return;
+  }
+
+  WiFiClient client;
+  HTTPClient http;
+  String url = API_BASE + uid;
+
+  Serial.println("   Sending to XAMPP...");
+  Serial.println("   GET: " + url);
+
+  if (http.begin(client, url)) {
+    int httpCode = http.GET();
+    String payload = http.getString();
+
+    Serial.println("   ────────────────────────────────");
     
-    int httpResponseCode = http.GET();
-    
-    if (httpResponseCode > 0) {
-      String response = http.getString();
-      Serial.println("Server response: " + response);
+    if (httpCode == 200) {
+      Serial.println("   ✓ HTTP 200 - Patient Loaded");
+      Serial.println("   " + payload.substring(0, min(150, (int)payload.length())));
       
-      if (response.indexOf("\"success\":true") > 0) {
-        Serial.println("✅ Patient session activated successfully!");
-      } else {
-        Serial.println("❌ Patient not found: " + uid);
-      }
+      digitalWrite(PIN_LED, HIGH); delay(100);
+      digitalWrite(PIN_LED, LOW); delay(100);
+      digitalWrite(PIN_LED, HIGH); delay(100);
+      digitalWrite(PIN_LED, LOW);
+      
+    } else if (httpCode == 404) {
+      Serial.println("   ❌ HTTP 404 - Patient Not Found");
+      blinkError();
+      
     } else {
-      Serial.println("HTTP Error: " + String(httpResponseCode));
+      Serial.printf("   ❌ HTTP %d - Server Error\n", httpCode);
+      blinkError();
     }
     
+    Serial.println("   ────────────────────────────────\n");
     http.end();
+    
   } else {
-    Serial.println("WiFi Disconnected");
+    Serial.println("   ❌ HTTP connection failed");
+    blinkError();
   }
 }
+
+void blinkError() {
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(PIN_LED, HIGH); delay(100);
+    digitalWrite(PIN_LED, LOW); delay(100);
+  }
+}
+
