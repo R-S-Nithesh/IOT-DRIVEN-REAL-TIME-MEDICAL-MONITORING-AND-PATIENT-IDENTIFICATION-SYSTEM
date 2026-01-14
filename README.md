@@ -28,18 +28,18 @@ health indicators.
 1. Prerequisites
 * •	Hardware:
   * •	ESP32 (ECG + vitals node)
-  •	ESP8266 D1 Mini (RFID node with RDM6300)
-  •	AD8232, MAX30102, DS18B20, DHT11, MQ135, YL 44 buzzer, RDM6300 module
-•	Software:
-  •	Arduino IDE with ESP32 and ESP8266 boards installed
-  •	XAMPP (Apache + MySQL) or similar local server
-  •	Web browser
+  * •	ESP8266 D1 Mini (RFID node with RDM6300)
+  * •	AD8232, MAX30102, DS18B20, DHT11, MQ135, YL 44 buzzer, RDM6300 module
+* •	Software:
+  * •	Arduino IDE with ESP32 and ESP8266 boards installed
+  * •	XAMPP (Apache + MySQL) or similar local server
+  * •	Web browser
 
 2. Download the REPO
-  •	Hardware/ECG_Monitoring/ECG_Monitoring.ino
-  •	Hardware/RFID_Reader/RFID_Reader.ino
-  •	MedicalAPI/ (PHP, HTML, JS, CSS)
-  •	Database/medical_monitoring.sql
+  * •	Hardware/ECG_Monitoring/ECG_Monitoring.ino
+  * •	Hardware/RFID_Reader/RFID_Reader.ino
+  * •	MedicalAPI/ (PHP, HTML, JS, CSS)
+  * •	Database/medical_monitoring.sql
 
 3. Set Up the Database
   •	Open http://localhost/phpmyadmin.
