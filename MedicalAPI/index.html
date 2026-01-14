@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Monitoring System</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏥 Medical Monitoring System</h1>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span class="status-text" id="statusText">Waiting for patient...</span>
+            </div>
+            <a href="manage_patients.html" class="nav-btn">Manage Patients</a>
+        </div>
+
+        <!-- Patient Info Card (Hidden until card scanned) -->
+        <div class="patient-card" id="patientCard">
+            <h2 style="margin-bottom: 20px; color: #667eea;">Patient Information</h2>
+            <div class="patient-info">
+                <div class="info-item">
+                    <span class="info-label">Name</span>
+                    <span class="info-value" id="patientName">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Age</span>
+                    <span class="info-value" id="patientAge">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value" id="patientGender">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Blood Type</span>
+                    <span class="info-value" id="patientBlood">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">RFID</span>
+                    <span class="info-value" id="patientRFID">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECG Waveform -->
+        <div class="ecg-card">
+            <h2>📈 ECG Waveform</h2>
+            <canvas id="ecgChart"></canvas>
+        </div>
+
+        <!-- Vital Signs -->
+        <div class="vitals-grid">
+            <!-- Heart Rate -->
+            <div class="vital-card">
+                <div class="vital-icon">❤️</div>
+                <div class="vital-label">Heart Rate</div>
+                <div class="vital-value" id="heartRate">--</div>
+                <div class="vital-unit">BPM</div>
+                <div class="vital-normal">Normal: 60-100 BPM</div>
+            </div>
+
+            <!-- SpO2 -->
+            <div class="vital-card">
+                <div class="vital-icon">💧</div>
+                <div class="vital-label">Blood Oxygen (SpO2)</div>
+                <div class="vital-value" id="spo2">--</div>
+                <div class="vital-unit">%</div>
+                <div class="vital-normal">Normal: 95-100%</div>
+            </div>
+
+            <!-- Body Temperature -->
+            <div class="vital-card">
+                <div class="vital-icon">🌡️</div>
+                <div class="vital-label">Body Temperature</div>
+                <div class="vital-value" id="bodyTemp">--</div>
+                <div class="vital-unit">°C</div>
+                <div class="vital-normal">Normal: 36-37.2°C</div>
+            </div>
+
+            <!-- Room Temperature -->
+            <div class="vital-card">
+                <div class="vital-icon">🌡️</div>
+                <div class="vital-label">Room Temperature</div>
+                <div class="vital-value" id="roomTemp">--</div>
+                <div class="vital-unit">°C</div>
+                <div class="vital-normal">Ambient</div>
+            </div>
+
+            <!-- Humidity -->
+            <div class="vital-card">
+                <div class="vital-icon">💦</div>
+                <div class="vital-label">Humidity</div>
+                <div class="vital-value" id="humidity">--</div>
+                <div class="vital-unit">%</div>
+                <div class="vital-normal">Relative Humidity</div>
+            </div>
+
+            <!-- Air Quality -->
+            <div class="vital-card">
+                <div class="vital-icon">🌬️</div>
+                <div class="vital-label">Air Quality</div>
+                <div class="vital-value" id="airQuality">--</div>
+                <div class="vital-unit">PPM</div>
+                <div class="vital-normal">Good: 0-350 PPM</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+
+        <!-- Clear old session on page load -->
+    <script>
+        // Clear session when page loads (fresh start)
+        fetch('/medical/api/clear_session.php').catch(err => console.log('Session cleared'));
+    </script>
+
+    <script src="assets/js/dashboard.js"></script>
+
+</body>
+</html>
