@@ -15,7 +15,7 @@ const char* WIFI_PASS = "YOUR_PASSWORD";
 const char* API_BASE = "http://YOUR_PC_IP/medical/api/get_patient_by_rfid.php?rfid="; //Change IP address to your mobile or other device IP
 
 // ========== Pin Definitions ==========
-#define PIN_RFID_RX   D7   // GPIO13 - RDM6300 TX → ESP8266 RX (MOVED FROM D8!)  //If not working Just Interchange the RX and TX pins.
+#define PIN_RFID_RX   D7   // GPIO13 - RDM6300 TX → ESP8266 RX  //If not working Just Interchange the RX and TX pins.
 #define PIN_RFID_TX   D6   // GPIO12 - Not used
 #define PIN_LED       D5   // GPIO14 - Status LED
 
