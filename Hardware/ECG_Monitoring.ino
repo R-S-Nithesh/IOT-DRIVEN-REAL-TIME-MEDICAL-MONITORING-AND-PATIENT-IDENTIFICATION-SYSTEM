@@ -17,7 +17,7 @@
 // ------ SETTINGS ------
 const char* WIFI_SSID = "YOUR_WIFI";
 const char* WIFI_PASS = "YOUR_PASSWORD";
-const char* SERVER_URL = "http://YOUR_PC_IP/MedicalAPI/api/save_sensor_data.php";
+const char* SERVER_URL = "http://YOUR_PC_IP/MedicalAPI/api/save_sensor_data.php";  //Changw IP address to your mobile or other device IP
 
 // ------ PINS -------
 #define PIN_ECG_OUT   36
