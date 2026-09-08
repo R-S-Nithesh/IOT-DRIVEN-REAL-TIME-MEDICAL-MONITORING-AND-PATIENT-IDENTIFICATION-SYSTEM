@@ -34,17 +34,17 @@ This project addresses both challenges through an integrated IoT platform that c
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────┐       ┌──────────────────────┐
+┌─────────────────────┐        ┌──────────────────────┐
 │   ESP32 (ECG Node)  │──────▶│                      │
-│  AD8232, MAX30102   │  WiFi │   XAMPP Local Server  │
-│  DS18B20, DHT11     │       │   (Apache + MySQL)    │
-│  MQ135, Buzzer      │       │                      │
-└─────────────────────┘       │   ┌──────────────┐   │
+│  AD8232, MAX30102   │  WiFi  │   XAMPP Local Server │
+│  DS18B20, DHT11     │        │   (Apache + MySQL)   │
+│  MQ135, Buzzer      │        │                      │
+└─────────────────────┘        │   ┌──────────────┐   │
                                │   │  MedicalAPI  │   │
-┌─────────────────────┐       │   │  (PHP + HTML)│   │
+┌─────────────────────┐        │   │  (PHP + HTML)│   │
 │  ESP8266 D1 Mini    │──────▶│   └──────────────┘   │
-│  (RFID Node)        │  WiFi │                      │
-│  RDM6300 Module     │       └──────────────────────┘
+│  (RFID Node)        │  WiFi  │                      │
+│  RDM6300 Module     │        └──────────────────────┘
 └─────────────────────┘                  │
                                          ▼
                                ┌──────────────────────┐
